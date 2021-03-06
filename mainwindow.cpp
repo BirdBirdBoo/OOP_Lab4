@@ -114,8 +114,8 @@ void MainWindow::setUpPlayingField()
     size.setWidth(PLAYING_FIELD_SIZE_TILES * PLAYING_FIELD_TILE_SIZE + 2 * 9 + 2);
     size.setHeight(PLAYING_FIELD_SIZE_TILES * PLAYING_FIELD_TILE_SIZE + 2 * 9 + ui->menubar->height() + 4);
 #elif TARGET_OS_MAC
-    size.setWidth(PLAYING_FIELD_SIZE_TILES * PLAYING_FIELD_TILE_SIZE + 2 * 9);
-    size.setHeight(PLAYING_FIELD_SIZE_TILES * PLAYING_FIELD_TILE_SIZE + 2 * 9 + ui->menubar->height());
+    size.setWidth(PLAYING_FIELD_SIZE_TILES * (PLAYING_FIELD_TILE_SIZE + 0) + 2 * 13);
+    size.setHeight(PLAYING_FIELD_SIZE_TILES * (PLAYING_FIELD_TILE_SIZE + 0) + 2 * 13);
 #endif
     this->resize(size);
     this->setMaximumSize(size);
