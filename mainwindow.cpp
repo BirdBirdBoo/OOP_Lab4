@@ -11,11 +11,89 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     setUpPlayingField();
+    setUpGameController();
+
+    gameController->startGame();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::onTileUpdate(int x, int y, TileType type)
+{
+    auto cell = cellAt(x, y);
+    switch (type) {
+    case SNAKE_HEAD:
+        cell->setText("H");
+        break;
+    case SNAKE_BODY:
+        cell->setText("B");
+        break;
+    case SNAKE_TAIL:
+        cell->setText("T");
+        break;
+    case FRUIT:
+        cell->setText("F");
+        break;
+    case EMPTY:
+        cell->setText(".");
+        break;
+    }
+
+}
+
+void MainWindow::onGameStopped(int score)
+{
+    QMessageBox gameLost(this);
+    gameLost.setWindowTitle("You lost");
+    gameLost.setText(tr("Score: %1").arg(score));
+    gameLost.setStandardButtons(QMessageBox::Retry);
+
+    auto button = gameLost.exec();
+    gameController->resetGame();
+
+    if (button == QMessageBox::Retry) {
+        gameController->startGame();
+    }
+}
+
+QTableWidgetItem *MainWindow::cellAt(int x, int y)
+{
+    QTableWidgetItem *item = ui->tableWidget->item(y, x);
+    if (item == nullptr) {
+        item = new QTableWidgetItem();
+        item->setTextAlignment(Qt::AlignHCenter);
+        ui->tableWidget->setItem(y, x, item);
+    }
+    return item;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *keyEvent)
+{
+    switch (keyEvent->key()) {
+    case Qt::Key_W:
+    case Qt::Key_Up:
+        gameController->snakeUp();
+        keyEvent->accept();
+        break;
+    case Qt::Key_S:
+    case Qt::Key_Down:
+        gameController->snakeDown();
+        keyEvent->accept();
+        break;
+    case Qt::Key_A:
+    case Qt::Key_Left:
+        gameController->snakeLeft();
+        keyEvent->accept();
+        break;
+    case Qt::Key_D:
+    case Qt::Key_Right:
+        keyEvent->accept();
+        gameController->snakeRight();
+        break;
+    }
 }
 
 void MainWindow::setUpPlayingField()
@@ -30,5 +108,19 @@ void MainWindow::setUpPlayingField()
 
     ui->tableWidget->horizontalHeader()->setVisible(false);
     ui->tableWidget->verticalHeader()->setVisible(false);
+}
+
+void MainWindow::setUpGameController()
+{
+    // focus on window to receive key events
+    this->setFocusPolicy(Qt::StrongFocus);
+    this->setFocus();
+
+    gameController = new GameController(PLAYING_FIELD_SIZE_TILES);
+
+    connect(gameController, SIGNAL(tileUpdateEvent(int,int,TileType)), this, SLOT(onTileUpdate(int,int,TileType)));
+    connect(gameController, SIGNAL(gameStopEvent(int)), this, SLOT(onGameStopped(int)));
+
+    gameController->resetGame();
 }
 

@@ -32,6 +32,12 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        TileType.h
+        gamecontroller.cpp
+        gamecontroller.h
+        direction.h
+        tiles.cpp
+        tiles.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
