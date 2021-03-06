@@ -2,7 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #define PLAYING_FIELD_SIZE_TILES 16
-#define PLAYING_FIELD_TILE_SIZE 32
+#define PLAYING_FIELD_TILE_SIZE 40
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -64,7 +64,7 @@ QTableWidgetItem *MainWindow::cellAt(int x, int y)
     QTableWidgetItem *item = ui->tableWidget->item(y, x);
     if (item == nullptr) {
         item = new QTableWidgetItem();
-        item->setTextAlignment(Qt::AlignHCenter);
+        item->setTextAlignment(Qt::AlignCenter);
         ui->tableWidget->setItem(y, x, item);
     }
     return item;
@@ -108,6 +108,9 @@ void MainWindow::setUpPlayingField()
 
     ui->tableWidget->horizontalHeader()->setVisible(false);
     ui->tableWidget->verticalHeader()->setVisible(false);
+
+    //this->setMinimumSize(16*80, tableHeight);
+    this->resize(16 * (PLAYING_FIELD_TILE_SIZE) + 18, 16 * (PLAYING_FIELD_TILE_SIZE)+ 18);
 }
 
 void MainWindow::setUpGameController()
@@ -122,5 +125,6 @@ void MainWindow::setUpGameController()
     connect(gameController, SIGNAL(gameStopEvent(int)), this, SLOT(onGameStopped(int)));
 
     gameController->resetGame();
+    gameController->setGameSpeed(5);
 }
 

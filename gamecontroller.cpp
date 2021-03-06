@@ -52,8 +52,8 @@ void GameController::tick() {
 
 void GameController::getRandomCoordinates(int *x, int *y)
 {
-    *x = arc4random() % fieldSize;
-    *y = arc4random() % fieldSize;
+    *x = rand() % fieldSize;
+    *y = rand() % fieldSize;
 }
 
 void GameController::moveHead(const direction headDirection)
