@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>274</width>
-    <height>252</height>
+    <width>567</width>
+    <height>498</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -74,10 +74,16 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>274</width>
+     <width>567</width>
      <height>20</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuGame">
+    <property name="title">
+     <string>Game</string>
+    </property>
+   </widget>
+   <addaction name="menuGame"/>
   </widget>
  </widget>
  <resources/>

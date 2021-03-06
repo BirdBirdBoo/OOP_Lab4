@@ -109,8 +109,17 @@ void MainWindow::setUpPlayingField()
     ui->tableWidget->horizontalHeader()->setVisible(false);
     ui->tableWidget->verticalHeader()->setVisible(false);
 
-    //this->setMinimumSize(16*80, tableHeight);
-    this->resize(16 * (PLAYING_FIELD_TILE_SIZE) + 18, 16 * (PLAYING_FIELD_TILE_SIZE)+ 18);
+    QSize size = this->size();
+#ifdef _WIN32
+    size.setWidth(PLAYING_FIELD_SIZE_TILES * PLAYING_FIELD_TILE_SIZE + 2 * 9 + 2);
+    size.setHeight(PLAYING_FIELD_SIZE_TILES * PLAYING_FIELD_TILE_SIZE + 2 * 9 + ui->menubar->height() + 4);
+#elif TARGET_OS_MAC
+    size.setWidth(PLAYING_FIELD_SIZE_TILES * PLAYING_FIELD_TILE_SIZE + 2 * 9);
+    size.setHeight(PLAYING_FIELD_SIZE_TILES * PLAYING_FIELD_TILE_SIZE + 2 * 9 + ui->menubar->height());
+#endif
+    this->resize(size);
+    this->setMaximumSize(size);
+    this->setMinimumSize(size);
 }
 
 void MainWindow::setUpGameController()
@@ -125,6 +134,6 @@ void MainWindow::setUpGameController()
     connect(gameController, SIGNAL(gameStopEvent(int)), this, SLOT(onGameStopped(int)));
 
     gameController->resetGame();
-    gameController->setGameSpeed(5);
+    gameController->setGameSpeed(1);
 }
 
