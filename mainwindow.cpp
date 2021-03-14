@@ -2,7 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #define PLAYING_FIELD_SIZE_TILES 16
-#define PLAYING_FIELD_TILE_SIZE 40
+#define PLAYING_FIELD_TILE_SIZE 32
 
 GamePalette candyPalette = {
     0xfff0e4d7,
@@ -129,6 +129,7 @@ void MainWindow::setUpPlayingField()
     ui->tableWidget->setColumnCount(PLAYING_FIELD_SIZE_TILES);
     ui->tableWidget->setRowCount(PLAYING_FIELD_SIZE_TILES);
 
+    ui->tableWidget->horizontalHeader()->setMinimumSectionSize(0);
     for (int i = 0; i < PLAYING_FIELD_SIZE_TILES; ++i) {
         ui->tableWidget->setColumnWidth(i, PLAYING_FIELD_TILE_SIZE);
         ui->tableWidget->setRowHeight(i, PLAYING_FIELD_TILE_SIZE);
