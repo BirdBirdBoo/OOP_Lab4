@@ -1,7 +1,5 @@
 #include "tiles.h"
 
-
-
 tile createSnakeHeadTile(direction directionToNextTile)
 {
     return createSnakeBodyTile(directionToNextTile);

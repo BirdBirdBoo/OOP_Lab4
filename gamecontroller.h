@@ -28,6 +28,8 @@ public:
         return state;
     }
 
+    void forceFieldRedraw();
+
     void snakeLeft() { tryChangeDirection(DIRECTION_LEFT); }
     void snakeRight() { tryChangeDirection(DIRECTION_RIGHT); }
     void snakeUp() { tryChangeDirection(DIRECTION_UP); }
@@ -85,7 +87,8 @@ private:
 
     void tryChangeDirection(direction newDirection);
 
-    void updateTileAt(int x, int y, tile newTile, TileType tileType);
+    void updateTileAt(int x, int y, tile newTile);
+    TileType tileToEnum(tile t);
 };
 
 #endif // GAMECONTROLLER_H

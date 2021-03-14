@@ -11,7 +11,7 @@
 typedef unsigned char tiletype;
 
 #define DIRECTION_MASK 0b11100
-#define TYPE_MASK 0b11
+#define TILE_TYPE_MASK 0b11
 
 /* tile bit layout is as follows
  * 0: 2 bits - tile type
@@ -23,16 +23,17 @@ tile createSnakeHeadTile(direction nextTileDirection);
 tile createSnakeBodyTile(direction nextTileDirection);
 tile createSnakeTailTile();
 
-inline tiletype getTileType(tile t) { return t & TYPE_MASK; }
+inline tiletype getTileType(tile t) { return t & TILE_TYPE_MASK; }
 
 inline tile createFruitTile() { return FRUIT_TILE; }
 inline tile createEmptyTile() { return EMPTY_TILE; }
 
 inline tile convertHeadToBodyTile(tile t) { return t; }
 
-inline bool isEmpty(tile t) { return (t & TYPE_MASK) == EMPTY_TILE; }
-inline bool isSnake(tile t) { return (t & TYPE_MASK) == SNAKE_TILE; }
+inline bool isEmpty(tile t) { return (t & TILE_TYPE_MASK) == EMPTY_TILE; }
+inline bool isSnake(tile t) { return (t & TILE_TYPE_MASK) == SNAKE_TILE; }
 inline bool isSnakeTail(tile t) { return isSnake(t) && ((t & DIRECTION_MASK) == NO_DIRECTION); }
+inline bool isWallTile(tile t) { return (t & TILE_TYPE_MASK) == WALL_TILE; }
 
 inline direction getDirection(tile t) { return (t & DIRECTION_MASK) >> 2; }
 

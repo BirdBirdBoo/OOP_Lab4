@@ -1,7 +1,5 @@
 #include "gamecontroller.h"
 
-#define TILE_NONE 0
-
 GameController::GameController(int fieldSize)
 {
     this->fieldSize = fieldSize;
@@ -13,9 +11,34 @@ GameController::~GameController()
     deleteField();
 }
 
-inline void GameController::updateTileAt(int x, int y, tile newTile, TileType tileType) {
+void GameController::forceFieldRedraw()
+{
+    for (int x = 0; x < fieldSize; ++x) {
+        for (int y = 0; y < fieldSize; ++y) {
+            emit tileUpdateEvent(x, y, tileToEnum(field[x][y]));
+        }
+    }
+}
+
+inline void GameController::updateTileAt(int x, int y, tile newTile) {
     field[x][y] = newTile;
-    emit tileUpdateEvent(x, y, tileType);
+    emit tileUpdateEvent(x, y, tileToEnum(newTile));
+}
+
+TileType GameController::tileToEnum(tile t)
+{
+    switch (t & TILE_TYPE_MASK) {
+    case EMPTY_TILE:
+        return EMPTY;
+    case SNAKE_TILE:
+        return SNAKE_BODY;
+    case FRUIT_TILE:
+        return FRUIT;
+    case WALL_TILE:
+        return WALL;
+    default:
+        return EMPTY;
+    }
 }
 
 void GameController::resetGame()
@@ -61,8 +84,8 @@ void GameController::moveHead(const direction headDirection)
     int px = snakeHeadX, py = snakeHeadY;
     moveCoordinates(&snakeHeadX, &snakeHeadY, headDirection);
 
-    updateTileAt(px, py, convertHeadToBodyTile(field[px][py]), SNAKE_BODY);
-    updateTileAt(snakeHeadX, snakeHeadY, createSnakeHeadTile(oppositeTo(headDirection)), SNAKE_HEAD);
+    updateTileAt(px, py, convertHeadToBodyTile(field[px][py]));
+    updateTileAt(snakeHeadX, snakeHeadY, createSnakeHeadTile(oppositeTo(headDirection)));
 }
 
 void GameController::moveTail()
@@ -78,8 +101,8 @@ void GameController::moveTail()
         moveCoordinates(&tailX, &tailY, dir);
         tile = field[tailX][tailY];
     }
-    updateTileAt(tailX, tailY, EMPTY_TILE, EMPTY);
-    updateTileAt(px, py, createSnakeTailTile(), SNAKE_TAIL);
+    updateTileAt(tailX, tailY, EMPTY_TILE);
+    updateTileAt(px, py, createSnakeTailTile());
 }
 
 void GameController::updateGameState(GameState newState)
@@ -111,9 +134,36 @@ void GameController::prepareFieldForStart()
 {
     for (int i = 0; i < fieldSize; ++i) {
         for (int j = 0; j < fieldSize; ++j) {
-            updateTileAt(i, j, TILE_NONE, EMPTY);
+            updateTileAt(i, j, EMPTY_TILE);
         }
     }
+
+    // UL corner
+    updateTileAt(1, 0, WALL_TILE);
+    updateTileAt(0, 0, WALL_TILE);
+    updateTileAt(0, 1, WALL_TILE);
+
+    // UR corner
+    updateTileAt(fieldSize - 2, 0, WALL_TILE);
+    updateTileAt(fieldSize - 1, 0, WALL_TILE);
+    updateTileAt(fieldSize - 1, 1, WALL_TILE);
+
+    // LL corner
+    updateTileAt(1, fieldSize - 1, WALL_TILE);
+    updateTileAt(0, fieldSize - 1, WALL_TILE);
+    updateTileAt(0, fieldSize - 2, WALL_TILE);
+
+    // LR corner
+    updateTileAt(fieldSize - 2, fieldSize - 1, WALL_TILE);
+    updateTileAt(fieldSize - 1, fieldSize - 1, WALL_TILE);
+    updateTileAt(fieldSize - 1, fieldSize - 2, WALL_TILE);
+
+    // lines
+    for (int y = 4; y < fieldSize - 4; ++y) {
+        updateTileAt(3, y, WALL_TILE);
+        updateTileAt(fieldSize - 4, y, WALL_TILE);
+    }
+
 
     prepareSnake();
     placeFruit();
@@ -124,17 +174,17 @@ void GameController::prepareSnake()
     snakeLength = INITIAL_SNAKE_LENGTH;
 
     snakeHeadY = snakeHeadX = fieldSize / 2;
-    updateTileAt(snakeHeadX, snakeHeadY, createSnakeHeadTile(DIRECTION_LEFT), SNAKE_HEAD);
+    updateTileAt(snakeHeadX, snakeHeadY, createSnakeHeadTile(DIRECTION_LEFT));
 
     newSnakeHeadDirection = snakeHeadDirection = DIRECTION_RIGHT;
 
     for (int dx = 1; dx < INITIAL_SNAKE_LENGTH - 1; ++dx) {
         const int bodyX = snakeHeadX - dx;
-        updateTileAt(bodyX, snakeHeadY, createSnakeBodyTile(DIRECTION_LEFT), SNAKE_BODY);
+        updateTileAt(bodyX, snakeHeadY, createSnakeBodyTile(DIRECTION_LEFT));
     }
 
     const int tailX = snakeHeadX - INITIAL_SNAKE_LENGTH + 1;
-    updateTileAt(tailX, snakeHeadY, createSnakeTailTile(), SNAKE_TAIL);
+    updateTileAt(tailX, snakeHeadY, createSnakeTailTile());
 }
 
 void GameController::timerEvent(QTimerEvent *event) {
@@ -177,7 +227,7 @@ void GameController::placeFruit()
     do {
         getRandomCoordinates(&x, &y);
     } while(field[x][y] != EMPTY_TILE);
-    updateTileAt(x, y, createFruitTile(), FRUIT);
+    updateTileAt(x, y, createFruitTile());
 }
 
 void GameController::tryChangeDirection(direction newDirection)

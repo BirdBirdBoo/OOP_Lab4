@@ -3,10 +3,9 @@
 
 enum TileType {
     EMPTY,
-    SNAKE_HEAD,
     SNAKE_BODY,
-    SNAKE_TAIL,
-    FRUIT
+    FRUIT,
+    WALL
 };
 
 #endif // TILETYPE_H
